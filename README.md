@@ -4,7 +4,7 @@ A simple Rust logginger implementing the [log crate](https://docs.rs/log/0.4.14/
 Writes all logs to a specified file with user provided format.
 
 # Usage
-```
+```rust
 //initialize the logger
 Minilog::init(LevelFilter::Info, "logs.txt", "{} - {}");
 
