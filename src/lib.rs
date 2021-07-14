@@ -23,7 +23,9 @@ impl Minilog {
 	/// # Examples
 	/// 
 	/// ```
-	/// Minilog::init(LevelFilter::Info, "logs.txt", "{} - {}")
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// Minilog::init(LevelFilter::Info, "logs.txt", "{} - {}");
 	/// ```
 	pub fn init(
 		loglevel: LevelFilter,
@@ -41,7 +43,9 @@ impl Minilog {
 	/// # Examples
 	/// 
 	/// ```
-	/// Minilog::set_log_level(LevelFilter::Info)
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// Minilog::set_log_level(LevelFilter::Info);
 	/// ```
 	pub fn set_log_level(loglevel: LevelFilter) {
 		set_max_level(loglevel);
@@ -59,21 +63,26 @@ impl Log for Minilog {
 	/// panics if it can't open the file or write to it
 	fn log(&self, record: &Record) {
 		if self.enabled(record.metadata()) {
-			let mut file = OpenOptions::new()
-				.read(true)
-				.append(true)
-				.create(true)
-				.open(&self.logfile_name);
 			let log_msg = self
 				.fmt_string
 				.replacen("{}", &format!("{}", format_args!("{}", record.level())), 1)
 				.replacen("{}", &format!("{}", format_args!("{}", record.args())), 1);
-			match &mut file {
-				Ok(file) => match writeln!(file, "{}", log_msg) {
-					Ok(_) => {}
-					Err(e) => panic!("{}: Write failed", e),
-				},
-				Err(e) => panic!("{}: Failed to write to logfile {}", e, &self.logfile_name),
+			if self.logfile_name == "stdout" {
+				println!("{}", log_msg);
+			}
+			else {
+				let mut file = OpenOptions::new()
+					.read(true)
+					.append(true)
+					.create(true)
+					.open(&self.logfile_name);
+				match &mut file {
+					Ok(file) => match writeln!(file, "{}", log_msg) {
+						Ok(_) => {}
+						Err(e) => panic!("{}: Write failed", e),
+					},
+					Err(e) => panic!("{}: Failed to write to logfile {}", e, &self.logfile_name),
+				}
 			}
 		}
 	}
