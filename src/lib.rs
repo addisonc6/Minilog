@@ -15,17 +15,16 @@ pub struct Minilog {
 	fmt_string: String,
 }
 
-
 impl Minilog {
 	/// Initializes the logger, must be called before attempting
 	/// to write log messages
-	/// 
+	///
 	/// # Examples
-	/// 
+	///
 	/// ```
 	/// # use log::LevelFilter;
 	/// # use minilog::Minilog;
-	/// Minilog::init(LevelFilter::Info, "logs.txt", "{} - {}");
+	/// Minilog::init(LevelFilter::Info, "logs.txt", "{level} - {msg}");
 	/// ```
 	pub fn init(
 		loglevel: LevelFilter,
@@ -39,9 +38,9 @@ impl Minilog {
 		.map(|()| set_max_level(loglevel))
 	}
 	///Sets the maximum level of log message to write
-	/// 
+	///
 	/// # Examples
-	/// 
+	///
 	/// ```
 	/// # use log::LevelFilter;
 	/// # use minilog::Minilog;
@@ -65,15 +64,26 @@ impl Log for Minilog {
 		if self.enabled(record.metadata()) {
 			let log_msg = self
 				.fmt_string
-				.replacen("{}", &format!("{}", format_args!("{}", record.level())), 1)
-				.replacen("{}", &format!("{}", format_args!("{}", record.args())), 1);
+				.replacen(
+					"{level}",
+					&format!("{}", format_args!("{}", record.level())),
+					1,
+				)
+				.replacen(
+					"{msg}",
+					&format!("{}", format_args!("{}", record.args())),
+					1,
+				)
+				.replacen(
+					"{file}",
+					&format!("{}", format_args!("{}", record.file().unwrap_or(""))),
+					1,
+				);
 			if self.logfile_name == "stdout" {
 				println!("{}", log_msg);
-			}
-			else if self.logfile_name == "stderr" {
+			} else if self.logfile_name == "stderr" {
 				eprintln!("{}", log_msg)
-			}
-			else {
+			} else {
 				let mut file = OpenOptions::new()
 					.read(true)
 					.append(true)
@@ -100,7 +110,7 @@ mod tests {
 	use std::fs;
 	#[test]
 	fn test() {
-		match Minilog::init(LevelFilter::Info, "Minilog_test_main.txt", "{}: {}") {
+		match Minilog::init(LevelFilter::Info, "Minilog_test_main.txt", "{level}: {msg}") {
 			Ok(_) => {}
 			Err(e) => panic!("{}: Could not set the logger!", e),
 		}

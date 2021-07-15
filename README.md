@@ -6,7 +6,7 @@ Writes all logs to a specified file with user provided format.
 # Usage
 ```rust
 //initialize the logger
-Minilog::init(LevelFilter::Info, "logs.txt", "{} - {}");
+Minilog::init(LevelFilter::Info, "logs.txt", "{level} - {msg}");
 
 //log messages to file
 log!(Level::Error, "Oh no! There was an error with something.");
