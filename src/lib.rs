@@ -70,6 +70,9 @@ impl Log for Minilog {
 			if self.logfile_name == "stdout" {
 				println!("{}", log_msg);
 			}
+			else if self.logfile_name == "stderr" {
+				eprintln!("{}", log_msg)
+			}
 			else {
 				let mut file = OpenOptions::new()
 					.read(true)
