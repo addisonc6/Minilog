@@ -52,14 +52,16 @@ impl Minilog {
 }
 
 impl Log for Minilog {
-	///returns whether logging is enabled for a given level
+	///Returns whether logging is enabled for a given level
 	fn enabled(&self, metadata: &Metadata) -> bool {
 		metadata.level() <= max_level()
 	}
 
-	///logs a message to file, using the format string provided
+	///Logs a message to file, using the format string provided.
+	/// The "level", "msg", or "file" enclosed in curly will
+	/// be replaced.
 	/// # Panics
-	/// panics if it can't open the file or write to it
+	/// Panics if it can't open the file or write to it
 	fn log(&self, record: &Record) {
 		if self.enabled(record.metadata()) {
 			let log_msg = self
