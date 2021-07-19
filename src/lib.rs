@@ -58,8 +58,8 @@ impl Log for Minilog {
 	}
 
 	///Logs a message to file, using the format string provided.
-	/// The "level", "msg", or "file" enclosed in curly will
-	/// be replaced.
+	/// The "level", "msg", "modpath", or "file" enclosed in 
+	/// curly braces will be replaced.
 	/// # Panics
 	/// Panics if it can't open the file or write to it
 	fn log(&self, record: &Record) {
@@ -74,6 +74,11 @@ impl Log for Minilog {
 				.replacen(
 					"{msg}",
 					&format!("{}", format_args!("{}", record.args())),
+					1,
+				)
+				.replacen(
+					"{modpath}",
+					&format!("{}", format_args!("{}", record.module_path().unwrap_or(""))),
 					1,
 				)
 				.replacen(
