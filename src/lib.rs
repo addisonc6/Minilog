@@ -37,6 +37,21 @@ impl Minilog {
 		}))
 		.map(|()| set_max_level(loglevel))
 	}
+	///Initializes a logger with default settings
+	/// 
+	/// #Examples
+	/// ```
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// Minilog::init_default();
+	/// ```
+	pub fn init_default() -> Result<(), SetLoggerError> {
+		set_boxed_logger(Box::new(Minilog {
+			logfile_name: "logs.txt".to_owned(),
+			fmt_string: "{level}: {msg}".to_owned(),
+		}))
+		.map(|()| set_max_level(LevelFilter::Trace))
+	}
 	///Sets the maximum level of log message to write
 	///
 	/// # Examples
@@ -58,7 +73,7 @@ impl Log for Minilog {
 	}
 
 	///Logs a message to file, using the format string provided.
-	/// The "level", "msg", "modpath", or "file" enclosed in 
+	/// The "level", "msg", "modpath", or "file" enclosed in
 	/// curly braces will be replaced.
 	/// # Panics
 	/// Panics if it can't open the file or write to it
@@ -89,7 +104,7 @@ impl Log for Minilog {
 			if self.logfile_name == "stdout" {
 				println!("{}", log_msg);
 			} else if self.logfile_name == "stderr" {
-				eprintln!("{}", log_msg)
+				eprintln!("{}", log_msg);
 			} else {
 				let mut file = OpenOptions::new()
 					.read(true)
