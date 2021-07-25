@@ -64,6 +64,36 @@ impl Minilog {
 	pub fn set_log_level(loglevel: LevelFilter) {
 		set_max_level(loglevel);
 	}
+	///Logs or panics if loglevel is too low
+	/// 
+	/// #Examples
+	/// 
+	/// ```
+	/// # use log::Level;
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// # use std::fs;
+	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
+	/// Minilog::log_or_panic(Level::Error, "Error!");
+	/// fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
+	/// ```
+	/// 
+	/// ```should_panic
+	/// # use log::Level;
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// //should panic
+	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
+	/// Minilog::log_or_panic(Level::Trace, "Trace!");
+	/// ```
+	/// 
+	pub fn log_or_panic(loglevel: Level, msg: &str) {
+		if loglevel > max_level() {
+			panic!("{} is too low to log", loglevel);
+		}
+		let mut record = Record::builder();
+		log!(loglevel, "{}", format!("{}", format_args!("{}", record.args(format_args!("{}", msg)).level(loglevel).build().args())));
+	}
 }
 
 impl Log for Minilog {
