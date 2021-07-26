@@ -92,14 +92,43 @@ impl Minilog {
 			panic!("{} is too low to log", loglevel);
 		}
 		let mut record = Record::builder();
-		log!(
-			loglevel,
-			"{}",
-			format!(
-				"{}",
-				format_args!(
-					"{}",
-					record
+		log!(loglevel,
+			"{}", format!(
+				"{}", format_args!(
+					"{}", record
+						.args(format_args!("{}", msg))
+						.level(loglevel)
+						.build()
+						.args()
+				)
+			)
+		);
+	}
+	///logs a message, upgrading the log level if log level isn't high enough
+	/// ```
+	/// # use log::Level;
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// use std::fs;
+	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
+	/// Minilog::log_upgrade(Level::Trace, "Trace!");
+	/// let file_contents =
+	///		fs::read_to_string("minilog_output_test.txt").expect("Was unable to read file.");
+	///fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
+	///assert_eq!(
+	///		file_contents,
+	///		"TRACE - Trace!\n"
+	///);
+	/// ```
+	pub fn log_upgrade(loglevel: Level, msg: &str) {
+		if loglevel > max_level() {
+			set_max_level(loglevel.to_level_filter())
+		}
+		let mut record = Record::builder();
+		log!(loglevel,
+			"{}", format!(
+				"{}", format_args!(
+					"{}", record
 						.args(format_args!("{}", msg))
 						.level(loglevel)
 						.build()
