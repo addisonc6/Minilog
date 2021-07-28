@@ -146,7 +146,7 @@ impl Log for Minilog {
 	}
 
 	///Logs a message to file, using the format string provided.
-	/// The "level", "msg", "modpath", or "file" enclosed in
+	/// The "level", "msg", "modpath", "line", or "file" enclosed in
 	/// curly braces will be replaced.
 	/// # Panics
 	/// Panics if it can't open the file or write to it
@@ -173,6 +173,11 @@ impl Log for Minilog {
 					"{file}",
 					&format!("{}", format_args!("{}", record.file().unwrap_or(""))),
 					1,
+				)
+				.replacen(
+					"{line}",
+					&format!("{}", format_args!("{}", record.line().unwrap_or(0))),
+					1
 				);
 			if self.logfile_name == "stdout" {
 				println!("{}", log_msg);
