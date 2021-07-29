@@ -39,7 +39,7 @@ impl Minilog {
 	}
 	///Initializes a logger with default settings
 	///
-	/// #Examples
+	/// # Examples
 	/// ```
 	/// # use log::LevelFilter;
 	/// # use minilog::Minilog;
@@ -66,7 +66,7 @@ impl Minilog {
 	}
 	///Logs or panics if loglevel is too low
 	///
-	/// #Examples
+	/// # Examples
 	///
 	/// ```
 	/// # use log::Level;
@@ -75,7 +75,7 @@ impl Minilog {
 	/// # use std::fs;
 	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
 	/// Minilog::log_or_panic(Level::Error, "Error!");
-	/// fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
+	/// # fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
 	/// ```
 	///
 	/// ```should_panic
@@ -109,12 +109,12 @@ impl Minilog {
 	/// # use log::Level;
 	/// # use log::LevelFilter;
 	/// # use minilog::Minilog;
-	/// use std::fs;
+	/// # use std::fs;
 	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
 	/// Minilog::log_upgrade(Level::Trace, "Trace!");
 	/// let file_contents =
 	///		fs::read_to_string("minilog_output_test.txt").expect("Was unable to read file.");
-	///fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
+	///# fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
 	///assert_eq!(
 	///		file_contents,
 	///		"TRACE - Trace!\n"
