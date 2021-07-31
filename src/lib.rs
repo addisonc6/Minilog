@@ -106,8 +106,7 @@ impl Minilog {
 	}
 	///logs a message, upgrading the log level if log level isn't high enough
 	/// ```
-	/// # use log::Level;
-	/// # use log::LevelFilter;
+	/// # use log::{Level, LevelFilter};
 	/// # use minilog::Minilog;
 	/// # use std::fs;
 	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
@@ -136,6 +135,29 @@ impl Minilog {
 				)
 			)
 		);
+	}
+	///logs a message, temporarily upgrading loglevel if it isn't high enough
+	/// # use log::{Level, LevelFilter, trace};
+	/// # use log::Level;
+	/// # use log::LevelFilter;
+	/// # use minilog::Minilog;
+	/// # use std::fs;
+	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
+	/// Minilog::log_upgrade(Level::Trace, "Trace!");
+	/// let file_contents =
+	///		fs::read_to_string("minilog_output_test.txt").expect("Was unable to read file.");
+	///# fs::remove_file("minilog_output_test.txt").expect("Unable to delete test file.");
+	///assert_eq!(
+	///		file_contents,
+	///		"TRACE - Trace!\n"
+	///);
+	/// ```
+	pub fn log_upgrade_temp(loglevel: Level, msg: &str) {
+		if loglevel > max_level() {
+			let current_level = max_level(); 
+			Minilog::log_upgrade(loglevel, msg);
+			set_max_level(current_level);
+		}
 	}
 }
 
