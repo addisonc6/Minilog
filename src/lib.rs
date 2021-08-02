@@ -137,9 +137,8 @@ impl Minilog {
 		);
 	}
 	///logs a message, temporarily upgrading loglevel if it isn't high enough
-	/// # use log::{Level, LevelFilter, trace};
-	/// # use log::Level;
-	/// # use log::LevelFilter;
+	/// ```
+    /// # use log::{Level, LevelFilter, trace};
 	/// # use minilog::Minilog;
 	/// # use std::fs;
 	/// Minilog::init(LevelFilter::Info, "minilog_output_test.txt", "{level} - {msg}");
@@ -159,6 +158,16 @@ impl Minilog {
 			set_max_level(current_level);
 		}
 	}
+    ///returns option with the maximum log level, none if logging is off
+    ///```
+    ///# use log::{Level, LevelFilter, trace};
+    ///# use minilog::Minilog;
+    ///Minilog::init(LevelFilter::Trace, "minilog_output_test.txt", "{level} - {msg}");
+    ///assert_eq!(Minilog::log_level(), Some(Level::Trace));
+    ///```
+    pub fn log_level() -> Option<Level> {
+        max_level().to_level()
+    }
 }
 
 impl Log for Minilog {
