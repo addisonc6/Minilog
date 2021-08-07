@@ -183,8 +183,7 @@ impl Log for Minilog {
 	/// Panics if it can't open the file or write to it
 	fn log(&self, record: &Record) {
 		if self.enabled(record.metadata()) {
-			let log_msg = self
-				.fmt_string
+			let log_msg = self.fmt_string
 				.replacen(
 					"{level}",
 					&format!("{}", format_args!("{}", record.level())),
@@ -239,6 +238,7 @@ impl Log for Minilog {
 mod tests {
 	use super::*;
 	use std::fs;
+	use std::path::Path;
 	#[test]
 	fn test() {
 		match Minilog::init(LevelFilter::Info, "Minilog_test_main.txt", "{level}: {msg}") {
@@ -258,5 +258,15 @@ mod tests {
 			file_contents,
 			"ERROR: Test log!\nERROR: Test error!\nWARN: Test warning!\nTRACE: Test trace! not excluded\n"
 		);
+	}
+	#[test]
+	#[ignore]
+	fn test_direct_to_stdout_log() {
+		match Minilog::init(LevelFilter::Info, "stdout", "{level}: {msg}") {
+			Ok(_) => {}
+			Err(e) => panic!("{}: Could not set the logger!", e),
+		}
+		info!("Log message");
+		assert_eq!(false, Path::new("stdout").exists())
 	}
 }
